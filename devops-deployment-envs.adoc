@@ -12,7 +12,7 @@ A _Project_ in OpenShift is a mechanism to scope applications in a cluster and i
 
 In this lab, you will create the _Dev_ deployment environment and deploy the Cart service into this environment. _Cart_ service is developed in Java using the Spring Boot framework.
 
-In the current lab, in order for you to become familiar with both the OpenShift Web Console and the OpenShift command line interface (CLI), every step is explained via both the Web Console and CLI which you can choose based on your preferences. Either way leads to the exact same result.
+In the current lab, in order for you to become familiar with both the OpenShift Web Console and the OpenShift command line interface (CLI), every step is explained via both the Web Console and CLI which you can choose based on your preferences. Either way leads to the exact same result. CLI commands may either be issued from your workstation (if you've installed the OpenShift CLI) or from the Terminal tab in Eclipse Che.
 Let’s start with with creating the _Dev_ deployment environment and deploying the Cart service.
 
 #### Create Project via OpenShift Web Console
@@ -48,16 +48,14 @@ If you already have a process in-place for building docker images, OpenShift all
 
 In this lab, you will use the S2I mechanism for building the Cart service from source code. Since Cart service is based on Spring Boot, you only need the Java language runtime for running this service and therefore you will use the certified OpenJDK application runtime which is provided in OpenShift out-of-the-box. Click on *Browse Catalog* to open the service catalog. The catalog shows the list of available language and application runtimes, services as well as templates. A template describes how to build, configure and deploy a set of containers in a reproducible manner. OpenShift templates simplify composing complex multi-container applications and makes it easy to recreate and configure complete applications from scratch by deploying a template.
 
-Enter _jdk_ in the text field in order to find the *Red Hat OpenJDK 1.8* language runtime, and then click on the one that shows https://www.oracle.com/java/duke.html[duke, the java mascot].
-
-image::devops-envs-catalog-jdk.png[OpenJDK Base Image, width=800]
+Enter _jdk_ in the text field in order to find the *Red Hat OpenJDK 8* language runtime. Click on the icon to select the runtime from the Service Catalog.
 
 Now that you have chosen the Java language runtime, you can enter the URL to the Cart service application source code to specify it as an input to the S2I process. Click *Next* and enter the following in the text fields:
 
 CAUTION: Replace `{{PROJECT_SUFFIX}}` with the number provided to you by the instructor.
 
-  * Name: `cart`
-  * Git URL: `http://{{GIT_SERVER_INTERNAL_URL}}/{{GIT_USER}}/cart-service.git`
+  * Application Name: `cart`
+  * Git Repository: `http://{{GIT_SERVER_INTERNAL_URL}}/{{GIT_USER}}/cart-service.git`
 
 image::devops-envs-cart-newapp.png[Deploy Cart Service, width=800]
 
@@ -89,7 +87,7 @@ OpenShift uses {{OPENSHIFT_DOCS_BASE}}/dev_guide/application_health.html[contain
 
 There are multiple ways to check a container liveness and readiness. You can define an HTTP URL, a command to execute in the container or a TCP socket to connect to. Click on *cart* deployment to see the deployment configuration for the Cart service. Alternatively, you can click on *Applications* &rarr; *Deployments* from the left-side menu and then on *cart*. Click on *Action* menu button and then *Edit Health Checks* to configure HTTP liveness and readiness probes for the Cart service.
 
-* Type: `HTTP`
+* Type: `HTTP GET`
 * Path: `/health`
 * Port: `8080`
 * Initial Delay: `15`
@@ -100,11 +98,20 @@ Wait till the Cart service is re-deployed with the new health check configuratio
 
 CAUTION: Replace `{{PROJECT_SUFFIX}}` with the number provided to you by the instructor.
 
-Alternatively, you can use the `curl` command to verify that the Cart service is functioning:
+Alternatively, you can use the `curl` command to verify that the Cart service is functioning. First, find the route associated with the cart service.
 
 [source,shell]
 ----
-$ curl http://{{CART_ROUTE}}/health
+$ oc get routes
+NAME      HOST/PORT                                            PATH      SERVICES   PORT       TERMINATION   WILDCARD
+cart      cart-dev-{{PROJECT_SUFFIX}.{{OPENSHIFT_APPS_HOSTNAME}}             cart       8080-tcp                 None
+----
+
+Then, use the `curl` command to check the health associated with that URL. For example:
+
+[source,shell]
+----
+$ curl http://cart-dev-{{PROJECT_SUFFIX}.{{OPENSHIFT_APPS_HOSTNAME}}/health
 
 {"status":"UP","diskSpace":{"status":"UP","total":10725883904,"free":9970741248,"threshold":10485760},"refreshScope":{"status":"UP"},"hystrix":{"status":"UP"}}
 ----
