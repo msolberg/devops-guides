@@ -104,14 +104,14 @@ Alternatively, you can use the `curl` command to verify that the Cart service is
 ----
 $ oc get routes
 NAME      HOST/PORT                                            PATH      SERVICES   PORT       TERMINATION   WILDCARD
-cart      cart-dev-{{PROJECT_SUFFIX}.{{OPENSHIFT_APPS_HOSTNAME}}             cart       8080-tcp                 None
+cart      cart-dev-{{PROJECT_SUFFIX}}.{{OPENSHIFT_APPS_HOSTNAME}}             cart       8080-tcp                 None
 ----
 
 Then, use the `curl` command to check the health associated with that URL. For example:
 
 [source,shell]
 ----
-$ curl http://cart-dev-{{PROJECT_SUFFIX}.{{OPENSHIFT_APPS_HOSTNAME}}/health
+$ curl http://cart-dev-{{PROJECT_SUFFIX}}.{{OPENSHIFT_APPS_HOSTNAME}}/health
 
 {"status":"UP","diskSpace":{"status":"UP","total":10725883904,"free":9970741248,"threshold":10485760},"refreshScope":{"status":"UP"},"hystrix":{"status":"UP"}}
 ----
