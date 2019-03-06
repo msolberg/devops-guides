@@ -99,7 +99,14 @@ pipeline {
 
 Notice that you don't have to use Git to clone the code repository in the pipeline anymore. The reason for that is that Jenkins has to clone the given code repository for fetching the pipeline definition, `Jenkinsfile`, and if the code for the application is also in the same repository then there is no need to clone the code, again.
 
-You need to push the Jenkinsfile to the Git repository in order to make it available on the Git server. Enter your Git username and password if asked:
+You need to push the Jenkinsfile to the Git repository in order to make it available on the Git server. If you're using Eclipse Che, you'll need to set your name in the git configuration before you can push to the repository.
+
+[source,shell]
+----
+$ git config user.name "YOUR NAME"
+----
+
+Enter your Git username and password if asked:
 
 CAUTION: Replace `{{PROJECT_SUFFIX}}` with the number provided to you by the instructor.
 
